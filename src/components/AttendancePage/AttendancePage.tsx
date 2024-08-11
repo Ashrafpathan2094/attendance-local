@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AttendanceDetails = () => {
+const AttendancePage = () => {
   const [dateTime, setDateTime] = useState(new Date());
   const [isSignedIn, setIsSignedIn] = useState(
     JSON.parse(localStorage.getItem("isSignedIn")) || false
   );
-  const [lastSignedInTime, setLastSignedInTime] = useState<any>();
+  const [lastSignedInTime, setLastSignedInTime] = useState(null);
   const currentLoggedIn = localStorage.getItem("currentLoggedIn");
   const navigate = useNavigate();
 
@@ -17,14 +17,28 @@ const AttendanceDetails = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatTime = (date) => {
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
   const handleSignIn = () => {
     const attendanceRecords =
       JSON.parse(localStorage.getItem("attendanceRecords")) || [];
 
     const newRecord = {
       email: currentLoggedIn,
-      day: dateTime.toLocaleDateString(),
-      signInTime: dateTime.toLocaleTimeString(),
+      day: formatDate(dateTime),
+      signInTime: formatTime(dateTime),
       signOutTime: null,
     };
 
@@ -44,12 +58,12 @@ const AttendanceDetails = () => {
     const updatedRecords = attendanceRecords.map((record) => {
       if (
         record.email === currentLoggedIn &&
-        record.day === dateTime.toLocaleDateString() &&
+        record.day === formatDate(dateTime) &&
         record.signOutTime === null
       ) {
         return {
           ...record,
-          signOutTime: dateTime.toLocaleTimeString(),
+          signOutTime: formatTime(dateTime),
         };
       }
       return record;
@@ -75,12 +89,22 @@ const AttendanceDetails = () => {
     const isUserSignedIn = attendanceRecords.some(
       (record) =>
         record.email === currentLoggedIn &&
-        record.day === dateTime.toLocaleDateString() &&
+        record.day === formatDate(dateTime) &&
         record.signOutTime === null
     );
 
     setIsSignedIn(isUserSignedIn);
-    setLastSignedInTime(dateTime);
+    if (isUserSignedIn) {
+      const lastRecord = attendanceRecords.find(
+        (record) =>
+          record.email === currentLoggedIn &&
+          record.day === formatDate(dateTime) &&
+          record.signOutTime === null
+      );
+      setLastSignedInTime(
+        new Date(`${formatDate(dateTime)}T${lastRecord.signInTime}`)
+      );
+    }
   }, [currentLoggedIn, dateTime]);
 
   return (
@@ -135,4 +159,4 @@ const AttendanceDetails = () => {
   );
 };
 
-export default AttendanceDetails;
+export default AttendancePage;

@@ -5,6 +5,8 @@ const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const isAdminLoggedIn = JSON.parse(localStorage.getItem("isAdminLoggedIn"));
+  const isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
 
   const users = JSON.parse(localStorage.getItem("users")) || [];
   const user = users.find(
@@ -30,25 +32,54 @@ const Header = () => {
     <div className="bg-gray-100 w-full flex justify-center items-center shadow-md">
       <div className="flex justify-between items-center w-[95%] mt-4 bg-blue-500 p-4 rounded-lg relative">
         <div className="text-white font-semibold text-lg">
-          Hello, <span className="text-yellow-300">{user?.username}</span>!
+          Hello,{" "}
+          <span className="text-yellow-300">
+            {isAdminLoggedIn ? "Admin" : user?.username}
+          </span>
+          !
         </div>
         <div className="flex items-center space-x-4">
-          <Link
-            to="/attendancePage"
-            className={`${
-              isActive("/attendancePage") ? "bg-blue-700" : ""
-            } text-white hover:text-gray-300 transition duration-200 px-3 py-2 rounded-md hover:bg-blue-700`}
-          >
-            Attendance Page
-          </Link>
-          <Link
-            to="/attendanceDetails"
-            className={`${
-              isActive("/attendanceDetails") ? "bg-blue-700" : ""
-            } text-white hover:text-gray-300 transition duration-200 px-3 py-2 rounded-md hover:bg-blue-700`}
-          >
-            Attendance Details
-          </Link>
+          {isLoggedIn && (
+            <>
+              <Link
+                to="/attendancePage"
+                className={`${
+                  isActive("/attendancePage") ? "bg-blue-700" : ""
+                } text-white hover:text-gray-300 transition duration-200 px-3 py-2 rounded-md hover:bg-blue-700`}
+              >
+                Attendance Page
+              </Link>
+              <Link
+                to="/attendanceDetails"
+                className={`${
+                  isActive("/attendanceDetails") ? "bg-blue-700" : ""
+                } text-white hover:text-gray-300 transition duration-200 px-3 py-2 rounded-md hover:bg-blue-700`}
+              >
+                Attendance Details
+              </Link>
+            </>
+          )}
+          {(isLoggedIn || isAdminLoggedIn) && (
+            <Link
+              to="/attendanceRequests"
+              className={`${
+                isActive("/attendanceRequests") ? "bg-blue-700" : ""
+              } text-white hover:text-gray-300 transition duration-200 px-3 py-2 rounded-md hover:bg-blue-700`}
+            >
+              Attendance Requests
+            </Link>
+          )}
+          {isAdminLoggedIn && (
+            <Link
+              to="/UserDetails"
+              className={`${
+                isActive("/UserDetails") ? "bg-blue-700" : ""
+              } text-white hover:text-gray-300 transition duration-200 px-3 py-2 rounded-md hover:bg-blue-700`}
+            >
+              UserDetails
+            </Link>
+          )}
+
           <div className="relative">
             <img
               src="/user.png"

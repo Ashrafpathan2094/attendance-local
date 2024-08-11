@@ -59,6 +59,9 @@ const Login = () => {
     <div className="flex h-[100vh] w-full items-center justify-center p-4">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-6">Login</h2>
+        <h2 className="font-semibold mb-6">
+          Use email:-admin@admin.com password:-admin@123 for admin login
+        </h2>
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-4">
             <label

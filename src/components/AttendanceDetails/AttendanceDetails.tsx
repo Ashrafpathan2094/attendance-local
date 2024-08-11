@@ -43,6 +43,31 @@ const AttendanceDetails = () => {
     navigate("/");
   };
 
+  const handleEdit = (email, day, signInTime, signOutTime) => {
+    const attendanceEditRequests =
+      JSON.parse(localStorage.getItem("attendanceEditRequests")) || [];
+    const currentLoggedIn = localStorage.getItem("currentLoggedIn");
+
+    const isPendingRequest = attendanceEditRequests.some(
+      (request) =>
+        request.email === currentLoggedIn &&
+        request.day === day &&
+        request.signInTime === signInTime &&
+        // request.signOutTime === signOutTime &&
+        request.status === "Pending"
+    );
+
+    if (isPendingRequest) {
+      alert("Already a pending request for this record.");
+    } else {
+      navigate(
+        `/editAttendanceRecord?email=${email}&day=${day}&signInTime=${signInTime}&signOutTime=${signOutTime}`
+      );
+    }
+  };
+
+  const isAdminLoggedIn = localStorage.getItem("isAdminLoggedIn");
+
   return (
     <div className="flex flex-col items-center justify-start h-screen p-8 bg-gray-100">
       <div className="flex justify-between items-center w-full mb-8">
@@ -78,6 +103,21 @@ const AttendanceDetails = () => {
                     <p>Date: {record.day}</p>
                     <p>Status: Full Day</p>
                   </div>
+                  {!isAdminLoggedIn && (
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 rounded-md mt-2"
+                      onClick={() =>
+                        handleEdit(
+                          record.email,
+                          record.day,
+                          record.signInTime,
+                          record.signOutTime
+                        )
+                      }
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

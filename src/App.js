@@ -7,36 +7,70 @@ import Register from "./components/Register/Register.tsx";
 import UserDetails from "./components/UserDetails/UserDetails.tsx";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.tsx";
 import Layout from "./components/Layout/Layout.tsx";
+import EditAttendanceRecord from "./components/EditAttendanceRecord/EditAttendanceRecord.tsx";
+import AttendanceRequests from "./components/AttendanceRequests/AttendanceRequests.tsx";
 
 export default function App() {
   const isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
   const isAdminLoggedIn = JSON.parse(localStorage.getItem("isAdminLoggedIn"));
   return (
     <div>
-      <Layout>
-        <Routes>
-          <Route index element={<Login />} />
-          <Route path="register" element={<Register />} />
-          {/* <ProtectedRoute> */}
+      <Routes>
+        <Route index element={<Login />} />
+        <Route path="register" element={<Register />} />
+        {/* <ProtectedRoute> */}
 
-          {(isLoggedIn || isAdminLoggedIn) && (
-            <>
-              <Route path="AttendanceDetails" element={<AttendanceDetails />} />
-              <Route path="AttendancePage" element={<AttendancePage />} />
-              <Route path="UserDetails" element={<UserDetails />} />
-            </>
-          )}
+        {(isLoggedIn || isAdminLoggedIn) && (
+          <>
+            <Route
+              path="AttendanceDetails"
+              element={
+                <Layout>
+                  <AttendanceDetails />
+                </Layout>
+              }
+            />
+            <Route
+              path="AttendancePage"
+              element={
+                <Layout>
+                  <AttendancePage />
+                </Layout>
+              }
+            />
+            <Route
+              path="/editAttendanceRecord"
+              element={
+                <Layout>
+                  <EditAttendanceRecord />
+                </Layout>
+              }
+            />
+            <Route
+              path="/attendanceRequests"
+              element={
+                <Layout>
+                  <AttendanceRequests />
+                </Layout>
+              }
+            />
+          </>
+        )}
 
-          {isAdminLoggedIn && (
-            <Layout>
-              <Route path="UserDetails" element={<UserDetails />} />
-            </Layout>
-          )}
-          {/* </ProtectedRoute> */}
+        {isAdminLoggedIn && (
+          <Route
+            path="UserDetails"
+            element={
+              <Layout>
+                <UserDetails />
+              </Layout>
+            }
+          />
+        )}
+        {/* </ProtectedRoute> */}
 
-          <Route path="*" element={<NoMatch />} />
-        </Routes>
-      </Layout>
+        <Route path="*" element={<NoMatch />} />
+      </Routes>
     </div>
   );
 }
